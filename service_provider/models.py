@@ -16,24 +16,3 @@ class service_provider(models.Model):
     def __str__(self) -> str:
         return self.name
 
-class Employer(models.Model):
-    name = models.CharField(max_length=255)
-    language= models.CharField(max_length=255)
-    phone = models.BigIntegerField()
-    rating = models.FloatField()
-    location = models.CharField()
-    gender = models.CharField()
-
-    def __str__(self) -> str:
-        return self.name
-
-class  category(models.Model):
-    job_category= models.CharField(max_length=255)
-    icon_url= models.TextField()
-
-
-#main table
-class job(models.Model):
-    title = models.CharField()
-    description= models.TextField()
-    #employer_id
