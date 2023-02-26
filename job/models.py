@@ -14,7 +14,7 @@ class job(models.Model):
    required_skills = models.TextField()
    status = models.CharField(max_length=255, choices=status_choices, default = "Hiring")
    employer = models.ForeignKey(employer, on_delete=models.CASCADE)
-   service_provider = models.ForeignKey(service_provider, on_delete=models.CASCADE)
+   service_provider = models.ForeignKey(service_provider, on_delete=models.CASCADE, null=True)
    category = models.ForeignKey(category, on_delete=models.CASCADE, null=True)
 
    def __str__(self) -> str:
