@@ -7,6 +7,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.views import APIView
 from django.http import JsonResponse
+from authentication.views import GoogleLogin
 # Create your views here.
 class list_service_provider_view(generics.ListAPIView):
     #permission_classes = [IsAuthenticated]
@@ -51,6 +52,7 @@ class update_service_provider_view(generics.UpdateAPIView):
 #         return JsonResponse(code=400, data="wrong parameters")
 
 class UpdateAPIView(UpdateModelMixin,GenericAPIView):
+    
     serializer_class = service_provider_serializer
     queryset = service_provider.objects.all()
     """
