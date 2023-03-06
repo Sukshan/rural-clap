@@ -15,6 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_auth.views import LoginView, LogoutView
+from rest_auth.registration.views import (
+    RegisterView, VerifyEmailView, ConfirmEmailView, SocialAccountListView)
+from authentication.views import GoogleLogin
 
 
 urlpatterns = [
@@ -24,4 +28,8 @@ urlpatterns = [
     path("employer/", include("employer.urls")),
     path("job-application/", include("job_application.urls")),
     path("category/", include("category.urls")),
+    path("authentication/",include("authentication.urls") ),
+    path('api-auth/', include('rest_framework.urls')),
+    path('rest-auth/', include('rest_auth.urls')),
+    path('rest-auth/registration/', include('rest_auth.registration.urls')),
 ]
