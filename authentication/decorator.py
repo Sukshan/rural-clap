@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from Ruralclap.settings import env
 def token_required(func):
     def inner(request, *args, **kwargs):
         auth_header = request.headers.get('Authorization')
@@ -11,8 +12,8 @@ def token_required(func):
         if not access_token:
             return JsonResponse({'error': 'Access token is missing.'}, status=400)
         try:
-            idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),'422436897824-v7gfeacadmg099objpl7269e3kmflsf0.apps.googleusercontent.com' )
+            id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID'))
             return func(request, *args, **kwargs)
         except Exception as e:
-            return JsonResponse({'error': 'Invalid access token.'}, status=400)
+            return JsonResponse({'error': e}, status=400)
     return inner
