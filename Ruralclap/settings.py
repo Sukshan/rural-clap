@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-&pjxzr5+mei1zk&&xdn6$al+m1j^cbmnxf7@(m02@&y#290wk5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -66,14 +70,14 @@ MIDDLEWARE = [
 ]
 
 # rest-auth settings
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.TokenAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     ),
+# }
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -98,8 +102,8 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         'APP': {
             'client_id': '422436897824-v7gfeacadmg099objpl7269e3kmflsf0.apps.googleusercontent.com',
-            'secret': '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',
-            'key': ''
+            'secret': env('CLIENT_ID'),
+            'key': env('CLIENT_SECRET'),
         }
     }
 }
