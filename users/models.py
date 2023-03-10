@@ -11,6 +11,7 @@ class users(models.Model):
     isEmployer = models.BooleanField(null= True, blank= True)
     description = models.TextField(null=True, blank=True)
     skills = models.TextField(blank= True, null= True)
+    expectedPayment =  models.PositiveIntegerField(blank= True, null= True)
 
    
     def __str__(self):
