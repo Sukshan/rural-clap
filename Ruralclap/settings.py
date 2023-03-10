@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'service_provider',
     'employer',
     'job',
+    'users',
     'category',
     'job_application',
     'authentication',
