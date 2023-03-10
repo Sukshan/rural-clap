@@ -4,10 +4,13 @@ from rest_framework.response import Response
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from Ruralclap.settings import env
-
+from users.models import users
+from users.serializer import user_serializer
 
 class GoogleLogin(SocialLoginView):
     def post(self, request, *args, **kwargs):
+        isNewUser =  False
+        userData = {}
         auth_header = request.headers.get('Authorization')
         if not auth_header:
             return Response({'error': 'Authentication header is missing'}, status=status.HTTP_400_BAD_REQUEST)
@@ -17,9 +20,19 @@ class GoogleLogin(SocialLoginView):
             return Response({'error': 'Access token is missing.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID') )
-            return Response({'success':'true','info':idinfo},status=status.HTTP_200_OK)
+            userEmail = idinfo['email']
+            print(userEmail)
+            try:
+                user = users.objects.get(email = userEmail)
+            except Exception as e:
+                user = "Not"
+                isNewUser = True
+            if(user!="Not"):
+                serializer = user_serializer(user)
+                userData = serializer.data
+            return Response({'success':'true','info':idinfo, 'isNewUser': isNewUser, 'userData': userData},status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'False'}, status=status.HTTP_400_BAD_REQUEST)
 
     
     

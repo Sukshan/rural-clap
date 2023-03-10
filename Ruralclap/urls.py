@@ -25,4 +25,5 @@ urlpatterns = [
     path("job-application/", include("job_application.urls")),
     path("category/", include("category.urls")),
     path("authentication/",include("authentication.urls")),
+    path("users/", include("users.urls")),
 ]
