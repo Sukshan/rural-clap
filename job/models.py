@@ -16,6 +16,6 @@ class job(models.Model):
    service_provider = models.ForeignKey(users, to_field="email", related_name='service_provider', null=True, blank=True, on_delete=models.CASCADE)
    category = models.ForeignKey(category, on_delete=models.CASCADE, null=True)
 
-   def __str__(self) -> str:
-    return self.title
+   def __str__(self):
+      return str({field.name: getattr(self, field.name) for field in self._meta.fields})
 
