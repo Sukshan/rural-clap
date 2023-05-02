@@ -2,11 +2,11 @@ from django.shortcuts import render
 from .serializer import job_serializer
 from .models import job
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
-from rest_framework.views import APIView
-from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
+
 # Create your views here.
 class list_job_view(generics.ListAPIView):
     #permission_classes = [IsAuthenticated]
@@ -69,3 +69,19 @@ class delete_job_view(generics.DestroyAPIView):
     # def get_queryset(self):
     #     user = self.request.user
     #     return service_provider.objects.filter(user=user)
+
+class list_employer_job_view(generics.ListAPIView):
+    def get(self, request, *args, **kwargs):
+        jobData = {}
+        employerId = int(request.headers.get('Employer'))
+        if not employerId:
+            return Response({'error': 'Employer Id is Missing'})
+        try:
+            jobs = job.objects.filter(employer=employerId)
+        except Exception as e:
+            jobs = "No Jobs Found"
+        if(jobs!="No Jobs Found"):
+            serializer = job_serializer(jobs, many=True)
+            jobData = serializer.data
+        return Response({'success':'true', 'jobData' : jobData}, status=status.HTTP_200_OK)
+

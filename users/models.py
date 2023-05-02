@@ -12,6 +12,11 @@ class users(models.Model):
     description = models.TextField(null=True, blank=True)
     skills = models.TextField(blank= True, null= True)
     expectedPayment =  models.PositiveIntegerField(blank= True, null= True)
+    category = models.TextField(null=True,blank=True) # job  category
+    modelRating= models.FloatField(null=True,blank=True)
+    age = models.IntegerField(null=True,blank=True)
+    education = models.TextField(null=True,blank=True)
+    experience = models.IntegerField(null=True,blank=True)
 
    
     def __str__(self):
