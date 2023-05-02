@@ -21,7 +21,7 @@ class GoogleLogin(SocialLoginView):
         try:
             idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID') )
             userEmail = idinfo['email']
-            print(userEmail)
+            print(idinfo)
             try:
                 user = users.objects.get(email = userEmail)
             except Exception as e:
