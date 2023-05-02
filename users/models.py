@@ -14,9 +14,9 @@ class users(models.Model):
     expectedPayment =  models.PositiveIntegerField(blank= True, null= True)
     category = models.TextField(null=True,blank=True) # job  category
     modelRating= models.FloatField(null=True,blank=True)
-    dob = models.DateField(null=True,blank=True)
+    age = models.IntegerField(null=True,blank=True)
     education = models.TextField(null=True,blank=True)
-    exp = models.IntegerField(null=True,blank=True)
+    experience = models.IntegerField(null=True,blank=True)
 
    
     def __str__(self):
