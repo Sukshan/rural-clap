@@ -28,6 +28,8 @@ class create_user_view(generics.CreateAPIView):
         # Modify the validated data as needed
         # For example, to set a default value for a field:
         if user_data['isEmployer']==False:
+            print("User data from front end")
+            print(user_data)
             model = load(model_path)
             preprocessor = load(preprocessor_path)
             index = [0]
