@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .serializer import job_serializer
+from users.serializer import user_serializer
 from .models import job
+from users import models 
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
@@ -73,15 +75,27 @@ class delete_job_view(generics.DestroyAPIView):
 class list_employer_job_view(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         jobData = {}
+        userData = {}
         employerId = int(request.headers.get('Employer'))
+        print("Employee id is here")
+        print(employerId)
         if not employerId:
             return Response({'error': 'Employer Id is Missing'})
         try:
-            jobs = job.objects.filter(employer=employerId)
+            user = models.users.objects.get(id=employerId)
         except Exception as e:
-            jobs = "No Jobs Found"
-        if(jobs!="No Jobs Found"):
-            serializer = job_serializer(jobs, many=True)
-            jobData = serializer.data
-        return Response({'success':'true', 'jobData' : jobData}, status=status.HTTP_200_OK)
+            user = "No user found"
+        if(user!="No user found"):
+            serializer = user_serializer(user)
+            userData = serializer.data
+            if(userData['isEmployer']):
+                jobs = job.objects.filter(employer=employerId)
+                serializer = job_serializer(jobs, many=True)
+                jobData = serializer.data
+                return Response({'success':'true', 'jobData' : jobData}, status=status.HTTP_200_OK)
+            else:
+                return Response({'success':'true', 'userData' : userData}, status=status.HTTP_200_OK)
+            
+        
+        
 
