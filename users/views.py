@@ -6,9 +6,16 @@ from rest_framework import mixins
 import pandas as pd
 from joblib import load
 import os
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
+from users.models import users
+from django.core import serializers
 
-model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model.joblib')
-preprocessor_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'preprocessor.joblib')
+model_path = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'model.joblib')
+preprocessor_path = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'preprocessor.joblib')
 
 
 class list_user_view(generics.ListAPIView):
@@ -27,11 +34,10 @@ class create_user_view(generics.CreateAPIView):
 
         # Modify the validated data as needed
         # For example, to set a default value for a field:
-        if user_data['isEmployer']==False:
+        if user_data['isEmployer'] == False:
             model = load(model_path)
             preprocessor = load(preprocessor_path)
             index = [0]
-            print(user_data['skills'])
             new_user = pd.DataFrame({
                 'age': user_data['age'],
                 'education': user_data['education'],
@@ -39,9 +45,10 @@ class create_user_view(generics.CreateAPIView):
                 'gender': user_data['gender'],
                 'job': user_data['category'],
                 'skills': user_data['skills'],
-            },index=index)
+            }, index=index)
             new_user['skills'] = new_user['skills'].str.split(',')
-            new_user['skills'] = ' '.join([str(skill) for skill in new_user['skills']])
+            new_user['skills'] = ' '.join(
+                [str(skill) for skill in new_user['skills']])
             new_user_encoded = preprocessor.transform(new_user)
             new_user_rating = model.predict(new_user_encoded)
             user_data['modelRating'] = new_user_rating[0]
@@ -54,3 +61,14 @@ class update_user_view(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+
+@api_view(["GET"])
+def serivce_provider_reco(request, *args, **kwargs):
+    language = request.GET.get('language', None)
+    location = request.GET.get('location', None)
+    category = request.GET.get('category', None)
+    reco = users.objects.filter(
+        isEmployer=False, language=language, location=location, category=category).order_by('-modelRating')
+    data = serializers.serialize('json', reco)
+    return Response({"message": "reco from user", 'data': data}, status=status.HTTP_200_OK)
