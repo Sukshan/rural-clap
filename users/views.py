@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views import View
 from .serializer import user_serializer
 from .models import users
 from rest_framework import generics
@@ -11,6 +12,9 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from users.models import users
 from django.core import serializers
+from job.models import job
+from django.shortcuts import get_object_or_404
+from job.serializer import job_serializer
 
 model_path = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'model.joblib')
@@ -72,3 +76,14 @@ def serivce_provider_reco(request, *args, **kwargs):
         isEmployer=False, language=language, location=location, category=category).order_by('-modelRating')
     data = serializers.serialize('json', reco)
     return Response({"message": "reco from user", 'data': data}, status=status.HTTP_200_OK)
+
+
+class service_provider_appliedjobs(generics.ListAPIView):
+    serializer_class = job_serializer
+    def get_queryset(self):
+        user = get_object_or_404(users, id=self.kwargs['pk'])
+        applied_jobs = user.applied_jobs.split()
+        applied_jobs = list(map(int, applied_jobs))
+        queryset = job.objects.filter(pk__in=applied_jobs)
+        print(queryset)
+        return queryset

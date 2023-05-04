@@ -17,6 +17,8 @@ class users(models.Model):
     age = models.IntegerField(null=True,blank=True)
     education = models.TextField(null=True,blank=True)
     experience = models.IntegerField(null=True,blank=True)
+    created_jobs = models.TextField(null=True, blank= True)
+    applied_jobs= models.TextField(null=True, blank= True)
 
    
     def __str__(self):
