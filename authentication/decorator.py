@@ -15,5 +15,6 @@ def token_required(func):
             id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID'))
             return func(request, *args, **kwargs)
         except Exception as e:
+            print(e);
             return JsonResponse({'error': 'Acces Denied'}, status=400)
     return inner

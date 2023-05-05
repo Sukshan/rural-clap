@@ -17,7 +17,6 @@ class list_job_view(generics.ListAPIView):
 
 
 class create_job_view(generics.CreateAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_serializer
     queryset = job.objects.all()
 

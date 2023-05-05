@@ -14,7 +14,8 @@ class job(models.Model):
    status = models.CharField(max_length=255, choices=status_choices)
    employer = models.ForeignKey(users, on_delete=models.CASCADE, related_name='employer', null=True)
    service_provider = models.ForeignKey(users, to_field="email", related_name='service_provider', null=True, blank=True, on_delete=models.CASCADE)
-   category = models.ForeignKey(category, on_delete=models.CASCADE, null=True)
+   category = models.TextField(null=True,blank=True)
+   location = models.TextField(null=True,blank=True)
 
    def __str__(self):
       return str({field.name: getattr(self, field.name) for field in self._meta.fields})
