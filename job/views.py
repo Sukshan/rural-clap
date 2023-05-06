@@ -10,14 +10,15 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Create your views here.
-class list_job_view(generics.ListAPIView):
-    #permission_classes = [IsAuthenticated]
+class list_hiring_job_view(generics.ListAPIView):
     serializer_class = job_serializer
-    queryset = job.objects.all()
+    def get_queryset(self):
+        category = self.request.query_params.get('category', None)
+        queryset = job.objects.filter(category=category,status='Hiring')
+        return queryset
 
 
 class create_job_view(generics.CreateAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_serializer
     queryset = job.objects.all()
 

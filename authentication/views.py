@@ -19,7 +19,7 @@ class GoogleLogin(SocialLoginView):
         if not access_token:
             return Response({'error': 'Access token is missing.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID') )
+            idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID'))
             userEmail = idinfo['email']
             print(idinfo)
             try:
