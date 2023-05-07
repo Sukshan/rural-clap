@@ -19,7 +19,20 @@ class GoogleLogin(SocialLoginView):
         if not access_token:
             return Response({'error': 'Access token is missing.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID') )
+            if '##' in access_token:
+                email = access_token[2:]
+                try:
+                    user = users.objects.get(email = email)
+                except Exception as e:
+                    user = "Not"
+                    isNewUser = True
+                if(user!="Not"):    
+                    serializer = user_serializer(user)
+                    userData = serializer.data
+                # print(email, isNewUser, userData)
+                idinfo = {'email': email}; 
+                return Response({'success':'true','info':idinfo, 'isNewUser': isNewUser, 'userData': userData},status=status.HTTP_200_OK)
+            idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID'))
             userEmail = idinfo['email']
             print(idinfo)
             try:

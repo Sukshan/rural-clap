@@ -2,26 +2,35 @@ from django.shortcuts import render
 from .serializer import job_application_serializer
 from .models import job_application
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
-from rest_framework.views import APIView
-from django.http import JsonResponse
-# Create your views here.
+from rest_framework.exceptions import ValidationError
+
+
 class list_job_application_view(generics.ListAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_application_serializer
     queryset = job_application.objects.all()
-
+    
 
 class create_job_application_view(generics.CreateAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_application_serializer
     queryset = job_application.objects.all()
+    def perform_create(self, serializer):
+        # Extract the relevant data from the serializer
+        data = serializer.validated_data
+        userId = data['user_id']
+        jobId = data['job_id']
+        print('here')
+        print(jobId,userId)
+        # Check if the record already exists in the database
+        if job_application.objects.filter(user_id=userId, job_id=jobId).exists():
+            raise ValidationError('This job application already exists')
+
+        # If the record doesn't exist, create a new one
+        serializer.save()
 
 
 class read_job_application_view(generics.RetrieveAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_application_serializer
     queryset = job_application.objects.all()
 

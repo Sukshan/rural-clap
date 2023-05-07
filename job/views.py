@@ -1,21 +1,24 @@
 from django.shortcuts import render
 from .serializer import job_serializer
+from users.serializer import user_serializer
 from .models import job
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework import status
+from django.core import serializers
 
 # Create your views here.
-class list_job_view(generics.ListAPIView):
-    #permission_classes = [IsAuthenticated]
+class list_hiring_job_view(generics.ListAPIView):
     serializer_class = job_serializer
-    queryset = job.objects.all()
+    def get_queryset(self):
+        category = self.request.query_params.get('category', None)
+        queryset = job.objects.filter(category=category,status='Hiring')
+        return queryset
 
 
 class create_job_view(generics.CreateAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_serializer
     queryset = job.objects.all()
 
@@ -72,16 +75,9 @@ class delete_job_view(generics.DestroyAPIView):
 
 class list_employer_job_view(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
-        jobData = {}
         employerId = int(request.headers.get('Employer'))
         if not employerId:
-            return Response({'error': 'Employer Id is Missing'})
-        try:
-            jobs = job.objects.filter(employer=employerId)
-        except Exception as e:
-            jobs = "No Jobs Found"
-        if(jobs!="No Jobs Found"):
-            serializer = job_serializer(jobs, many=True)
-            jobData = serializer.data
-        return Response({'success':'true', 'jobData' : jobData}, status=status.HTTP_200_OK)
-
+            return Response({'error': 'Employer Id is Missing'},status=status.HTTP_400_BAD_REQUEST)
+        empJob = job.objects.filter(employer=employerId)
+        empJobSerialized = serializers.serialize('json', empJob)
+        return Response({'data':empJobSerialized},status=status.HTTP_200_OK)
