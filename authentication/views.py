@@ -29,7 +29,9 @@ class GoogleLogin(SocialLoginView):
                 if(user!="Not"):    
                     serializer = user_serializer(user)
                     userData = serializer.data
-                return Response({'success':'true','info':email, 'isNewUser': isNewUser, 'userData': userData},status=status.HTTP_200_OK)
+                # print(email, isNewUser, userData)
+                idinfo = {'email': email}; 
+                return Response({'success':'true','info':idinfo, 'isNewUser': isNewUser, 'userData': userData},status=status.HTTP_200_OK)
             idinfo = id_token.verify_oauth2_token(access_token, requests.Request(),env('CLIENT_ID'))
             userEmail = idinfo['email']
             print(idinfo)
