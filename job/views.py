@@ -2,12 +2,12 @@ from django.shortcuts import render
 from .serializer import job_serializer
 from users.serializer import user_serializer
 from .models import job
-from users import models 
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework import status
+from django.core import serializers
 
 # Create your views here.
 class list_hiring_job_view(generics.ListAPIView):
@@ -75,28 +75,9 @@ class delete_job_view(generics.DestroyAPIView):
 
 class list_employer_job_view(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
-        jobData = {}
-        userData = {}
         employerId = int(request.headers.get('Employer'))
-        print("Employee id is here")
-        print(employerId)
         if not employerId:
-            return Response({'error': 'Employer Id is Missing'})
-        try:
-            user = models.users.objects.get(id=employerId)
-        except Exception as e:
-            user = "No user found"
-        if(user!="No user found"):
-            serializer = user_serializer(user)
-            userData = serializer.data
-            if(userData['isEmployer']):
-                jobs = job.objects.filter(employer=employerId)
-                serializer = job_serializer(jobs, many=True)
-                jobData = serializer.data
-                return Response({'success':'true', 'jobData' : jobData}, status=status.HTTP_200_OK)
-            else:
-                return Response({'success':'true', 'userData' : userData}, status=status.HTTP_200_OK)
-            
-        
-        
-
+            return Response({'error': 'Employer Id is Missing'},status=status.HTTP_400_BAD_REQUEST)
+        empJob = job.objects.filter(employer=employerId)
+        empJobSerialized = serializers.serialize('json', empJob)
+        return Response({'data':empJobSerialized},status=status.HTTP_200_OK)
