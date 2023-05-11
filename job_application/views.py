@@ -5,11 +5,20 @@ from rest_framework import generics
 from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class list_job_application_view(generics.ListAPIView):
     serializer_class = job_application_serializer
-    queryset = job_application.objects.all()
+    # queryset = job_application.objects.all()
+    def get_queryset(self):
+        job_id = self.request.query_params.get('id', None)
+        print(job_id);
+        if job_id is None:
+            return Response({'error': 'job_id parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+        queryset = job_application.objects.filter(job_id=job_id)
+        return queryset
     
 
 class create_job_application_view(generics.CreateAPIView):
@@ -20,7 +29,6 @@ class create_job_application_view(generics.CreateAPIView):
         data = serializer.validated_data
         userId = data['user_id']
         jobId = data['job_id']
-        print('here')
         print(jobId,userId)
         # Check if the record already exists in the database
         if job_application.objects.filter(user_id=userId, job_id=jobId).exists():
