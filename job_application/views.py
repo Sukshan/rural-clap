@@ -14,7 +14,6 @@ class list_job_application_view(generics.ListAPIView):
     # queryset = job_application.objects.all()
     def get_queryset(self):
         job_id = self.request.query_params.get('id', None)
-        print(job_id);
         if job_id is None:
             return Response({'error': 'job_id parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
         queryset = job_application.objects.filter(job_id=job_id)
@@ -86,3 +85,12 @@ class delete_job_application_view(generics.DestroyAPIView):
     # def get_queryset(self):
     #     user = self.request.user
     #     return service_provider.objects.filter(user=user)
+    
+class service_provider_applied_jobs(generics.ListAPIView):
+    serializer_class = job_application_serializer
+    def get_queryset(self):
+        user_id = self.request.query_params.get('id', None)
+        if user_id is None:
+            return Response({'error': 'user_id parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+        queryset = job_application.objects.filter(user_id=user_id)
+        return queryset
