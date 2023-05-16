@@ -8,4 +8,5 @@ urlpatterns = [
     path("update/<int:pk>/", views.update_user_view.as_view(), name ="UpdateAnUser"), 
     path('service-provider/reco',views.serivce_provider_reco),
     path('service-provider/<int:pk>/applied-jobs/', views.service_provider_appliedjobs.as_view(), name="listofappliedjobs"),
+    path('employer/<int:pk>/created-jobs', views.employer_createdjobs.as_view(), name="listofcreatedjobs")
 ]

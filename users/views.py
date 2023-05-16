@@ -87,3 +87,12 @@ class service_provider_appliedjobs(generics.ListAPIView):
         queryset = job.objects.filter(pk__in=applied_jobs)
         print(queryset)
         return queryset
+    
+class employer_createdjobs(generics.ListAPIView):
+    serializer_class = job_serializer
+    def get_queryset(self):
+        user = get_object_or_404(users, id=self.kwargs['pk'])
+        created_jobs = user.created_jobs.split()
+        created_jobs = list(map(int, created_jobs))
+        queryset = job.objects.filter(pk__in=created_jobs)
+        return queryset
