@@ -75,6 +75,7 @@ def serivce_provider_reco(request, *args, **kwargs):
     reco = users.objects.filter(
         isEmployer=False, language=language, location=location, category=category).order_by('-modelRating')
     data = serializers.serialize('json', reco)
+    print(data)
     return Response({"message": "reco from user", 'data': data}, status=status.HTTP_200_OK)
 
 
@@ -85,14 +86,4 @@ class service_provider_appliedjobs(generics.ListAPIView):
         applied_jobs = user.applied_jobs.split()
         applied_jobs = list(map(int, applied_jobs))
         queryset = job.objects.filter(pk__in=applied_jobs)
-        print(queryset)
-        return queryset
-    
-class employer_createdjobs(generics.ListAPIView):
-    serializer_class = job_serializer
-    def get_queryset(self):
-        user = get_object_or_404(users, id=self.kwargs['pk'])
-        created_jobs = user.created_jobs.split()
-        created_jobs = list(map(int, created_jobs))
-        queryset = job.objects.filter(pk__in=created_jobs)
-        return queryset
+        return queryset    
