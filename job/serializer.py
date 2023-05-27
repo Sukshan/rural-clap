@@ -4,6 +4,7 @@ from users.serializer import user_serializer
 
 
 class job_serializer(serializers.ModelSerializer):
+    service_provider = user_serializer(read_only=True)
     class Meta:
         model = job
         fields = "__all__"

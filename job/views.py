@@ -14,7 +14,8 @@ class list_hiring_job_view(generics.ListAPIView):
     serializer_class = job_serializer
     def get_queryset(self):
         category = self.request.query_params.get('category', None)
-        queryset = job.objects.filter(category=category,status='Hiring')
+        status = self.request.query_params.get('status', None)
+        queryset = job.objects.filter(category=category,status=status)
         return queryset
 
 
@@ -24,34 +25,12 @@ class create_job_view(generics.CreateAPIView):
 
 
 class read_job_view(generics.RetrieveAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_serializer
     queryset = job.objects.all()
-
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     return job.objects.filter(user=user)
-
 
 class update_job_view(generics.UpdateAPIView):
-    #permission_classes = [IsAuthenticated]
     serializer_class = job_serializer
     queryset = job.objects.all()
-
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     return service_provider.objects.filter(user=user)
-
-# class update_partial_view(APIView):
-#     def get_object(self, pk):
-#         return service_provider.objects.get(pk=pk)
-#     def patch(self, request, pk):
-#         testmodel_object = self.get_object(pk)
-#         serializer = job_serializer(testmodel_object, data=request.data, partial=True) # set partial=True to update a data partially
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse(code=201, data=serializer.data)
-#         return JsonResponse(code=400, data="wrong parameters")
 
 class UpdateAPIView(UpdateModelMixin,GenericAPIView):
     serializer_class = job_serializer
@@ -79,5 +58,5 @@ class list_employer_job_view(generics.ListAPIView):
         if not employerId:
             return Response({'error': 'Employer Id is Missing'},status=status.HTTP_400_BAD_REQUEST)
         empJob = job.objects.filter(employer=employerId)
-        empJobSerialized = serializers.serialize('json', empJob)
-        return Response({'data':empJobSerialized},status=status.HTTP_200_OK)
+        empJobSerialized = job_serializer(empJob, many=True)
+        return Response({'data':empJobSerialized.data},status=status.HTTP_200_OK)

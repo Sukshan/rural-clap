@@ -28,7 +28,6 @@ class create_job_application_view(generics.CreateAPIView):
         data = serializer.validated_data
         userId = data['user_id']
         jobId = data['job_id']
-        print(jobId,userId)
         # Check if the record already exists in the database
         if job_application.objects.filter(user_id=userId, job_id=jobId).exists():
             raise ValidationError('This job application already exists')
