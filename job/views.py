@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .serializer import job_serializer
 from users.serializer import user_serializer
+from users.models import users
 from .models import job
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
@@ -22,6 +23,17 @@ class list_hiring_job_view(generics.ListAPIView):
 class create_job_view(generics.CreateAPIView):
     serializer_class = job_serializer
     queryset = job.objects.all()
+    def perform_create(self, serializer):
+        employer_id = self.request.data.get('employer')
+        service_provider_id = self.request.data.get('service_provider')
+        employer = users.objects.get(id=int(employer_id))
+        service_provider = None
+
+        if service_provider_id and 'id' in service_provider_id:
+            service_provider_id = service_provider_id['id']
+            service_provider = users.objects.get(id=int(service_provider_id))
+
+        serializer.save(employer=employer, service_provider=service_provider)
 
 
 class read_job_view(generics.RetrieveAPIView):

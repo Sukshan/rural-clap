@@ -7,7 +7,8 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
-
+from users.models import users
+from job.models import job
 
 class list_job_application_view(generics.ListAPIView):
     serializer_class = job_application_serializer
@@ -24,16 +25,15 @@ class create_job_application_view(generics.CreateAPIView):
     serializer_class = job_application_serializer
     queryset = job_application.objects.all()
     def perform_create(self, serializer):
-        # Extract the relevant data from the serializer
-        data = serializer.validated_data
-        userId = data['user_id']
-        jobId = data['job_id']
-        # Check if the record already exists in the database
-        if job_application.objects.filter(user_id=userId, job_id=jobId).exists():
-            raise ValidationError('This job application already exists')
+        user_id = self.request.data['user_id']
+        job_id = self.request.data['job_id']
 
-        # If the record doesn't exist, create a new one
-        serializer.save()
+        if job_application.objects.filter(user_id=user_id, job_id=job_id).exists():
+            raise ValidationError('This job application already exists')
+        user_data = users.objects.get(id=int(user_id))
+        job_data = job.objects.get(id=int(job_id))
+
+        serializer.save(user_id=user_data, job_id=job_data)
 
 
 class read_job_application_view(generics.RetrieveAPIView):
